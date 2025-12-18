@@ -62,13 +62,13 @@ int storage_open(void) {
     if (!exec("CREATE TABLE IF NOT EXISTS messages ("
         "id bigserial NOT NULL, "
         "timestamp timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL, "
-        "\"from\" bigserial NOT NULL, "
-        "\"to\" bigserial NOT NULL, "
+        "from_id bigserial NOT NULL, "
+        "to_id bigserial NOT NULL, "
         "content text NOT NULL, "
         "read boolean NOT NULL DEFAULT FALSE, "
         "CONSTRAINT messages_pk PRIMARY KEY (id), "
-        "CONSTRAINT messages_users_fk_from FOREIGN KEY (\"from\") REFERENCES users(id), "
-        "CONSTRAINT messages_users_fk_to FOREIGN KEY (\"to\") REFERENCES users(id))")) {
+        "CONSTRAINT messages_users_fk_from FOREIGN KEY (from_id) REFERENCES users(id), "
+        "CONSTRAINT messages_users_fk_to FOREIGN KEY (to_id) REFERENCES users(id))")) {
         log_warn("Unable to create messages table");
     }
 }
@@ -171,7 +171,7 @@ int submit_message(message message) {
     };
 
     PGresult *res = PQexecParams(conn,
-        "INSERT INTO messages (\"from\", \"to\", content) VALUES ($1, $2, $3) RETURNING id",
+        "INSERT INTO messages (from_id, to_id, content) VALUES ($1, $2, $3) RETURNING id",
         3,
         NULL,
         paramValues,
@@ -236,12 +236,12 @@ message *get_messages(user user, bool unread_messages_only, int *out_count) {
     char *query =
         "SELECT m.id, "
         "uf.name, ut.name, "
-        "m.\"from\", m.\"to\", "
+        "m.from_id, m.to_id, "
         "m.content, m.timestamp, m.read "
         "FROM messages m "
-        "JOIN users uf ON uf.id = m.\"from\" "
-        "JOIN users ut ON ut.id = m.\"to\" "
-        "WHERE m.\"to\" = $1 "
+        "JOIN users uf ON uf.id = m.from_id "
+        "JOIN users ut ON ut.id = m.to_id "
+        "WHERE m.to_id = $1 "
         "AND ($2 = false OR m.read = false) "
         "ORDER BY m.timestamp ASC";
 
@@ -266,12 +266,12 @@ message *get_next(user user, bool _mark_read) {
     char *query =
         "SELECT m.id, "
         "uf.name, ut.name, "
-        "m.\"from\", m.\"to\", "
+        "m.from_id, m.to_id, "
         "m.content, m.timestamp, m.read "
         "FROM messages m "
-        "JOIN users uf ON uf.id = m.\"from\" "
-        "JOIN users ut ON ut.id = m.\"to\" "
-        "WHERE m.\"to\" = $1 "
+        "JOIN users uf ON uf.id = m.from_id "
+        "JOIN users ut ON ut.id = m.to_id "
+        "WHERE m.to_id = $1 "
         "AND m.read = false "
         "ORDER BY m.timestamp ASC "
         "LIMIT 1";
