@@ -76,6 +76,7 @@ int storage_open(void) {
         "CONSTRAINT messages_users_fk_to FOREIGN KEY (to_id) REFERENCES users(id))")) {
         log_warn("Unable to create messages table");
     }
+    return 1;
 }
 
 void storage_close(void) {
@@ -195,6 +196,7 @@ int submit_message(message message) {
         PQclear(res);
         return id;
     }
+    return -1;
 }
 
 message *_get_messages(PGresult *res, int *out_count) {
