@@ -214,10 +214,10 @@ message *_get_messages(PGresult *res, int *out_count) {
         messages[i].from.id = atoi(PQgetvalue(res, i, 3));
         messages[i].to.id = atoi(PQgetvalue(res, i, 4));
         messages[i].content = strdup(PQgetvalue(res, i, 5));
-        messages[i].read = (strcmp(PQgetvalue(res, i, 6), "t") == 0);
+        messages[i].read = (strcmp(PQgetvalue(res, i, 7), "t") == 0);
 
         // Parse timestamp
-        char *ts_str = PQgetvalue(res, i, 5);
+        char *ts_str = PQgetvalue(res, i, 6);
         struct tm tm;
         memset(&tm, 0, sizeof(tm));
         if (strptime(ts_str, "%Y-%m-%d %H:%M:%S", &tm)) {
