@@ -3,6 +3,7 @@
 #include "user.h"
 #include <time.h>
 #include <json.h>
+#include <stdbool.h>
 
 typedef struct message {
     int id;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "message.h"
+#include <stdbool.h>
 
 /**
  * Open the database

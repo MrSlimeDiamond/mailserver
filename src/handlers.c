@@ -3,6 +3,7 @@
 #include "storage.h"
 #include "logging.h"
 #include <json.h>
+#include <stdbool.h>
 
 json_object *create_root_json_object(int status, char *request_type) {
     json_object *root = json_object_new_object();
