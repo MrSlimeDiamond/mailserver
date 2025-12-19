@@ -209,7 +209,10 @@ message *_get_messages(PGresult *res, int *out_count) {
 
     int count = PQntuples(res);
 
-    if (count <= 0) {
+    if (!count || count <= 0) {
+        log_debug("get_messages: message count is 0 - returning null");
+        *out_count = 0;
+        PQclear(res);
         return NULL;
     }
 
@@ -306,7 +309,7 @@ message *get_next(user user, bool _mark_read) {
     message *message = _get_messages(res, &out_count);
     // message should only be an array of 1
 
-    if (_mark_read) {
+    if (_mark_read && message) {
         mark_read(message->id);
     }
 
