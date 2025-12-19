@@ -292,6 +292,8 @@ void handle_get_next_request(int conn_id, json_object *root) {
     json_object *data = get_data(conn_id, root);
     if (!data) return;
 
+    json_object_object_add(root, "status", json_object_new_int(200));
+
     json_object *mark_read_object = json_object_object_get(root, "mark_read");
 
     bool mark_read = false;
