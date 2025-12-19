@@ -208,6 +208,11 @@ message *_get_messages(PGresult *res, int *out_count) {
     }
 
     int count = PQntuples(res);
+
+    if (count <= 0) {
+        return NULL;
+    }
+
     message *messages = malloc(sizeof(message) * count);
     if (!messages) {
         log_error("Unable to allocate memory to get messages");
